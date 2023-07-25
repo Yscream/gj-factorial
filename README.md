@@ -1,1 +1,1 @@
-# gj-factorial
+# go-factorial
