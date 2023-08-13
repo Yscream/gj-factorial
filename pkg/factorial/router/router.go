@@ -6,11 +6,11 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func NewRouter(svc *services.FactorialService) *httprouter.Router {
-	h := handlers.NewHandler(svc)
+func New(svc *services.FactorialService) *httprouter.Router {
+	handler := handlers.NewHandler(svc)
 
 	router := httprouter.New()
-	router.POST("/calculate", h.NewCalculateHandler)
+	router.POST("/calculate", handler.NewCalculateHandler)
 
 	return router
 }

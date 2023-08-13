@@ -3,19 +3,19 @@ package handlers
 import (
 	"errors"
 
-	"github.com/Yscream/go-factorial/pkg/factorial/models"
+	entities "github.com/Yscream/go-factorial"
 )
 
 // func checks model for empty fields and negative numbers
-func validateModel(d *models.Data) error {
+func validateData(numbers *entities.Numbers) error {
 	switch {
-	case d.A == nil:
+	case numbers.A == nil:
 		return errors.New("incorrect input")
-	case d.B == nil:
+	case numbers.B == nil:
 		return errors.New("incorrect input")
-	case *d.A < 0:
+	case *numbers.A < 0:
 		return errors.New("incorrect input")
-	case *d.B < 0:
+	case *numbers.B < 0:
 		return errors.New("incorrect input")
 	}
 

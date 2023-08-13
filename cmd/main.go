@@ -11,7 +11,7 @@ import (
 func main() {
 	newFactorialCalculator := &services.FactorialService{}
 	svc := services.NewFactorialService(newFactorialCalculator)
-	r := router.NewRouter(svc)
+	r := router.New(svc)
 
 	log.Println("server is starting on port :8989.....")
 	log.Fatal(http.ListenAndServe(":8989", r))

@@ -1,40 +1,46 @@
 package services
 
-import "github.com/Yscream/go-factorial/pkg/factorial/models"
+import (
+	"sync"
 
-type FactorialCalculator interface {
-	Calculate(d *models.Data)
-}
+	entities "github.com/Yscream/go-factorial"
+)
 
 type FactorialService struct {
-	FactorialCalculatorSvc FactorialCalculator
+	factorialCalculator entities.FactorialCalculator
 }
 
-func NewFactorialService(fc FactorialCalculator) *FactorialService {
+func NewFactorialService(fc entities.FactorialCalculator) *FactorialService {
 	return &FactorialService{
-		FactorialCalculatorSvc: fc,
+		factorialCalculator: fc,
 	}
 }
 
-func (s *FactorialService) Calculate(d *models.Data) {
-	// create two channels to pass the factorial results for A and B
-	ch1 := make(chan *int)
-	ch2 := make(chan *int)
-
-	// run goroutines to calculate factorials for A and B
-	go factorial(d.A, ch1)
-	go factorial(d.B, ch2)
-
-	// get results from channels and store them in structure d
-	d.A = <-ch1
-	d.B = <-ch2
-}
-
-func factorial(n *int, ch chan<- *int) {
+func (s *FactorialService) Calculate(n int) int {
 	result := 1
-	for i := 2; i <= *n; i++ {
+	for i := 2; i <= n; i++ {
 		result *= i
 	}
 
-	ch <- &result
+	return result
+}
+
+func (s *FactorialService) CalculateConcurrently(inputNumbers *entities.Numbers) *entities.Numbers {
+	var wg sync.WaitGroup
+
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		*inputNumbers.A = s.factorialCalculator.Calculate(*inputNumbers.A)
+	}()
+
+	go func() {
+		defer wg.Done()
+		*inputNumbers.B = s.factorialCalculator.Calculate(*inputNumbers.B)
+	}()
+
+	wg.Wait()
+
+	return inputNumbers
 }
